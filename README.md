@@ -78,3 +78,72 @@ A simple kits plugin for RocketMod with extra features including storing kits da
   <Translation Id="command_deletekit_deleted" Value="Deleted {0} kit(s) with the name of '{1}'." />
 </Translations>
 ```
+
+## Developers
+
+### API
+
+KitsPlus exposes an API for other plugins to use. The API is exposed through the `KitsPlus.Instance` property.
+
+```csharp
+
+KitsPlusPlugin.Instance.KitDb // The database used for storing kits data
+KitsPlusPlugin.Instance.Configuration // The configuration used for the plugin
+```
+
+```csharp
+public interface IKitDatabase: IDisposable
+{
+    string Name { get; }
+
+    List<Kit> GetKits();
+    List<Kit> GetKits(IRocketPlayer player);
+
+    Kit GetKitByName(string name);
+    Kit GetKitByName(IRocketPlayer player, string name);
+
+    bool CreateKit(Kit kit);
+    int DeleteKit(string name);
+}
+```
+
+### Models
+
+Kit
+
+-   Name: The name of the kit
+-   XP: The amount of XP to give the player
+-   Vehicle: The vehicle to give the player
+-   Cooldown: The cooldown of the kit in seconds
+-   Items: The items to give the player
+
+```csharp
+[Serializable]
+public class Kit
+{
+    public string Name { get; set; }
+
+    public uint? XP { get; set; }
+
+    public ushort? Vehicle { get; set; }
+
+    public int Cooldown { get; set; }
+
+    public List<KitItem> Items { get; set; }
+}
+```
+
+Kit Item
+
+-   Id: The item id
+-   Amount: The amount of the item
+
+```csharp
+[Serializable]
+public class KitItem
+{
+    public ushort Id { get; set; }
+
+    public byte Amount { get; set; }
+}
+```
