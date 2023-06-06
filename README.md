@@ -40,6 +40,7 @@ A simple kits plugin for RocketMod with extra features including storing kits da
 <KitsPlusConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <DatabaseType>json</DatabaseType>
   <MySQLConnectionString>Server=127.0.0.1;Port=3306;Database=unturned;Uid=root;Pwd=pwd;</MySQLConnectionString>
+  <MySQLTablePrefix>myserver</MySQLTablePrefix>
   <GlobalCooldown>10</GlobalCooldown>
 </KitsPlusConfiguration>
 ```
