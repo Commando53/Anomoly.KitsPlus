@@ -70,6 +70,8 @@ namespace Anomoly.KitsPlus
             {"command_kits_list","Available kits: {0}" },
             {"command_createkit_invalid","Please do /createkit {0}!" },
             {"command_createkit_created","Successfully created the '{0}' kit!" },
+            {"command_createkit_existing_name","A kit already exists with the name of '{0}'!" },
+            {"command_createkit_failed","Failed to create '{0}' kit." },
             {"command_giftkit_invalid","Please do /givekit {0}!" },
             {"command_giftkit_no_player","No player could be found by the name of '{0}'." },
             {"command_giftkit_no_kit", "No kit could be found by the name of '{0}'." },

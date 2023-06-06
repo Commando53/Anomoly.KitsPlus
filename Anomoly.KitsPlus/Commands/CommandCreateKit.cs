@@ -68,8 +68,20 @@ namespace Anomoly.KitsPlus.Commands
                 Items = player.GetKitItemsFromInventory(),
             };
 
-            KitsPlusPlugin.Instance.KitDb.CreateKit(kit);
-            UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_createkit_created", kit.Name), true);
+            var existingKit = KitsPlusPlugin.Instance.KitDb.GetKitByName(kit.Name);
+
+            if(existingKit != null)
+            {
+                UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_createkit_existing_name", kit.Name), true);
+                return;
+            }
+
+
+            bool createdKit = KitsPlusPlugin.Instance.KitDb.CreateKit(kit);
+            if (createdKit)
+                UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_createkit_created", kit.Name), true);
+            else
+                UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_createkit_failed", kit.Name), true);
         }
     }
 }

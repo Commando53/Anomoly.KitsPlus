@@ -80,6 +80,10 @@ namespace Anomoly.KitsPlus.Databases
 
         public bool CreateKit(Kit kit)
         {
+            var existingKit = GetKitByName(kit.Name);
+            if (existingKit != null)
+                return false;
+
             _kits.Add(kit);
             SaveJsonFile();
             return true;

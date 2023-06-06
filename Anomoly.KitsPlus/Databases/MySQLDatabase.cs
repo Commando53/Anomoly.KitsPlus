@@ -31,22 +31,38 @@ namespace Anomoly.KitsPlus.Databases
 
         private void CheckSchema()
         {
-            dbConnection.ExecuteUpdate($"CREATE TABLE IF NOT EXISTS `{KitsTable}` (`name` varchar(32) NOT NULL, `vehicle` smallint unsigned, `xp` int unsigned, `cooldown` int, PRIMARY KEY (`name`));");
-            dbConnection.ExecuteUpdate($"CREATE TABLE IF NOT EXISTS `{KitItemsTable}` (`kit_name` varchar(32) NOT NULL, `id` smallint unsigned, `amount` tinyint unsigned, PRIMARY KEY(`kit_name`,`id`))");
+            try
+            {
+                dbConnection.ExecuteUpdate($"CREATE TABLE IF NOT EXISTS `{KitsTable}` (`name` varchar(32) NOT NULL, `vehicle` smallint unsigned, `xp` int unsigned, `cooldown` int, PRIMARY KEY (`name`));");
+                dbConnection.ExecuteUpdate($"CREATE TABLE IF NOT EXISTS `{KitItemsTable}` (`kit_name` varchar(32) NOT NULL, `id` smallint unsigned, `amount` tinyint unsigned, PRIMARY KEY(`kit_name`,`id`))");
+            }
+            catch(Exception ex)
+            {
+                Logger.LogWarning("Unable to verify if table schemas were created.");
+                Logger.LogException(ex, "Error verifying table schema");
+            }
         }
 
         public bool CreateKit(Kit kit)
         {
-            int affectedRows = dbConnection.ExecuteUpdate($"INSERT INTO `{KitsTable}` (`name`, `vehicle`, `xp`, `cooldown`) VALUES(?,?,?,?);", kit.Name, kit.Vehicle, kit.XP, kit.Cooldown);
-            
-            if(affectedRows > 0)
+            try
             {
-                foreach (var item in kit.Items)
-                {
-                    dbConnection.ExecuteUpdate($"INSERT INTO `{KitItemsTable}` (`kit_name`, `id`, `amount`) VALUES(?,?,?);", kit.Name, item.Id, item.Amount);
-                }
+                int affectedRows = dbConnection.ExecuteUpdate($"INSERT INTO `{KitsTable}` (`name`, `vehicle`, `xp`, `cooldown`) VALUES(?,?,?,?);", kit.Name, kit.Vehicle, kit.XP, kit.Cooldown);
 
-                return true;
+                if (affectedRows > 0)
+                {
+                    foreach (var item in kit.Items)
+                    {
+                        dbConnection.ExecuteUpdate($"INSERT INTO `{KitItemsTable}` (`kit_name`, `id`, `amount`) VALUES(?,?,?);", kit.Name, item.Id, item.Amount);
+                    }
+
+                    return true;
+                }
+            }
+            catch(Exception ex)
+            {
+                Logger.LogWarning("Failed to create kit.");
+                Logger.LogException(ex, "Error on creating kit");
             }
 
             return false;
@@ -95,13 +111,13 @@ namespace Anomoly.KitsPlus.Databases
                     reader.Close();
                 }
             }
-            catch(Exception ex) { Logger.LogException(ex, "Failed to get kit by name."); }
+            catch(Exception ex) { Logger.LogException(ex, "Error getting kit."); }
             return kit;
         }
 
         public Kit GetKitByName(IRocketPlayer player, string name)
         {
-            if (!player.HasPermission($"kit.{name}"))
+            if (!player.HasPermission($"kit.{name.ToLower()}"))
             {
                 return null;
             }
@@ -162,7 +178,7 @@ namespace Anomoly.KitsPlus.Databases
 
         public List<Kit> GetKits(IRocketPlayer player)
         {
-            return GetKits().Where(k => player.HasPermission($"kit.{k.Name}")).ToList();
+            return GetKits().Where(k => player.HasPermission($"kit.{k.Name.ToLower()}")).ToList();
         }
 
         public void Dispose()

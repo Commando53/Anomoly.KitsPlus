@@ -61,30 +61,14 @@ namespace Anomoly.KitsPlus.Utils
 
         public int ExecuteUpdate(string query, params object[] parameterValues)
         {
-            try
-            {
-                var command = PrepareCommand(query, parameterValues);
-                return command.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogException(ex, "Failed to execute update query");
-                throw ex;
-            }
+            var command = PrepareCommand(query, parameterValues);
+            return command.ExecuteNonQuery();
         }
 
         public MySqlDataReader Execute(string query, params object[] parameterValues)
         {
-            try
-            {
-                var command = PrepareCommand(query, parameterValues);
-                return command.ExecuteReader();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogException(ex, "Failed to execute query");
-                throw ex;
-            }
+            var command = PrepareCommand(query, parameterValues);
+            return command.ExecuteReader();
         }
 
 
