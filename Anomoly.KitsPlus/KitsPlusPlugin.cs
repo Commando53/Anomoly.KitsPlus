@@ -83,7 +83,10 @@ namespace Anomoly.KitsPlus
             {"command_giftkit_gifted","{0} has gifted you their '{1}' kit!" },
             {"command_giftkit_self","You cannot gift yourself a kit!" },
             {"command_deletekit_invalid","Please do /deletekit {0}!" },
-            {"command_deletekit_deleted","Deleted {0} kit(s) with the name of '{1}'." }
+            {"command_deletekit_deleted","Deleted {0} kit(s) with the name of '{1}'." },
+            {"command_migratekits_migrated","Migrated {0} kits succesfully with {1} failures. " },
+            {"command_migratekits_warning","Please shutdown the server and remove the old Kits plugin. Restart only after removing!" },
+            {"command_migratekits_no_plugin","Failed to find Kits plugin. Please make sure to restart the server with the plugin installed." }
         };
     }
 }
