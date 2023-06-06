@@ -20,7 +20,7 @@ namespace Anomoly.KitsPlus.Commands
 
         public string Help => "Create a new kit from items in your inventory";
 
-        public string Syntax => "<name> [<cooldown>] [<vehicle>] [<xp>]";
+        public string Syntax => "<name> [<cooldown>] [<vehicle>] [<xp>] [<max_usage>]";
 
         public List<string> Aliases => new List<string>();
 
@@ -28,7 +28,7 @@ namespace Anomoly.KitsPlus.Commands
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
-            if(command.Length == 0 || command.Length > 4)
+            if (command.Length == 0 || command.Length > 5)
             {
                 UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_createkit_invalid", Syntax), true);
                 return;
@@ -38,8 +38,9 @@ namespace Anomoly.KitsPlus.Commands
             int cooldown = 0;
             ushort vehicle = 0;
             uint xp = 0;
+            int maxUsage = 0;
 
-            if(command.Length >= 2 && !int.TryParse(command[1], out cooldown))
+            if (command.Length >= 2 && !int.TryParse(command[1], out cooldown))
             {
                 UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_createkit_invalid", Syntax), true);
                 return;
@@ -51,7 +52,13 @@ namespace Anomoly.KitsPlus.Commands
                 return;
             }
 
-            if(command.Length == 4 && !uint.TryParse(command[3], out xp))
+            if (command.Length >= 4 && !uint.TryParse(command[3], out xp))
+            {
+                UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_createkit_invalid", Syntax), true);
+                return;
+            }
+
+            if(command.Length == 5 && !int.TryParse(command[4], out maxUsage))
             {
                 UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_createkit_invalid", Syntax), true);
                 return;
@@ -66,11 +73,12 @@ namespace Anomoly.KitsPlus.Commands
                 Vehicle = vehicle,
                 Cooldown = cooldown,
                 Items = player.GetKitItemsFromInventory(),
+                MaxUsage = maxUsage
             };
 
             var existingKit = KitsPlusPlugin.Instance.KitDb.GetKitByName(kit.Name);
 
-            if(existingKit != null)
+            if (existingKit != null)
             {
                 UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_createkit_existing_name", kit.Name), true);
                 return;

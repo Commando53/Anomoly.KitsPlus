@@ -52,7 +52,10 @@ namespace Anomoly.KitsPlus.Managers
             if (GlobalCooldown <= 0)
                 return;
 
-            _global.Add(playerId, DateTime.Now);
+            if (_global.ContainsKey(playerId))
+                _global[playerId] = DateTime.Now;
+            else
+                _global.Add(playerId, DateTime.Now);
         }
 
         public int GetTimeLeftForKit(IRocketPlayer player, string kitName)

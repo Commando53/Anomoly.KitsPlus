@@ -17,6 +17,7 @@ namespace Anomoly.KitsPlus
         public static KitsPlusPlugin Instance { get; private set; }
 
         public CooldownManager CooldownManager { get; private set; }
+        public UsageManager UsageManager { get; private set; }
         public IKitDatabase KitDb { get; set; }
 
         protected override void Load()
@@ -25,6 +26,7 @@ namespace Anomoly.KitsPlus
 
             Instance = this;
             CooldownManager = new CooldownManager();
+            UsageManager = new UsageManager();
 
             switch (Configuration.Instance.DatabaseType.ToLower())
             {
@@ -41,10 +43,9 @@ namespace Anomoly.KitsPlus
             }
 
 
-            Logger.Log("KitsPlus by Anomoly has loaded!");
+            Logger.Log($"{string.Format("KitsPlus v{0}", Assembly.GetName().Version.ToString())} by Anomoly has loaded!");
             Logger.Log("Need support? Join my Discord @ https://discord.gg/rVH9e7Kj9y");
             Logger.LogWarning("When reloading, cooldowns will refresh");
-            
         }
 
         protected override void Unload()
@@ -66,6 +67,8 @@ namespace Anomoly.KitsPlus
             {"command_kit_not_found", "Kit not found! View available kits using /kits" },
             {"command_kit_global_cooldown", "Please wait {0} seconds before redeeming another kit." },
             {"command_kit_cooldown","Please wait {0} seconds before redeeming the '{1}' kit again." },
+            {"command_kit_max_usage","You have used {0}/{0} uses of the '{1}' kit!" },
+            {"command_kit_usage_left", "You have {0} uses left!" },
             {"command_kit_redeemed","You have successfully redeemed the '{0}' kit!" },
             {"command_kits_list","Available kits: {0}" },
             {"command_createkit_invalid","Please do /createkit {0}!" },

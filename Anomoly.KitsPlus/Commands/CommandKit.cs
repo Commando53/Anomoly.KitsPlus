@@ -44,14 +44,39 @@ namespace Anomoly.KitsPlus.Commands
                 return;
             }
 
+            var usageEnabled = KitsPlusPlugin.Instance.Configuration.Instance.KitUsagesEnabled && kit.MaxUsage > 0;
+
+            if(usageEnabled && KitsPlusPlugin.Instance.UsageManager.GetKitUsage(caller.Id, kit.Name) >= kit.MaxUsage)
+            {
+                UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_kit_max_usage", kit.MaxUsage, kit.Name), true);
+                return;
+            }
+
             bool isOnCooldown = KitsPlusPlugin.Instance.CooldownManager.CheckCooldown(caller, kit);
             if (isOnCooldown)
                 return;
 
             bool success = caller.GiveKit(kit);
 
+
+
             if(success)
+            {
                 UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_kit_redeemed", kit.Name), true);
+                
+                if(kit.Cooldown > 0)
+                    KitsPlusPlugin.Instance.CooldownManager.SetKitCooldown(caller, kit.Name);
+                if (KitsPlusPlugin.Instance.Configuration.Instance.GlobalCooldown > 0)
+                    KitsPlusPlugin.Instance.CooldownManager.SetGlobalCooldown(caller.Id);
+                if (usageEnabled)
+                {
+                    KitsPlusPlugin.Instance.UsageManager.AddUsage(caller.Id, kit.Name);
+                    
+                    var uses = KitsPlusPlugin.Instance.UsageManager.GetKitUsage(caller.Id, kit.Name);
+                    UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_kit_usage_left", (kit.MaxUsage - uses)), true);
+                }
+                    
+            }
         }
     }
 }

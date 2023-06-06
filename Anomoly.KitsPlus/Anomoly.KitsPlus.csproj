@@ -125,12 +125,15 @@
     <Compile Include="Commands\CommandKits.cs" />
     <Compile Include="Databases\IKitDatabase.cs" />
     <Compile Include="Databases\JsonDatabase.cs" />
+    <Compile Include="Databases\Migrations\IMySQLMigration.cs" />
+    <Compile Include="Databases\Migrations\MaxUsage_Migration.cs" />
     <Compile Include="Databases\MySQLDatabase.cs" />
     <Compile Include="Data\Kit.cs" />
     <Compile Include="Data\KitItem.cs" />
     <Compile Include="KitsPlusConfiguration.cs" />
     <Compile Include="KitsPlusPlugin.cs" />
     <Compile Include="Managers\CooldownManager.cs" />
+    <Compile Include="Managers\UsageManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\DbConnection.cs" />
     <Compile Include="Utils\PlayerUtils.cs" />

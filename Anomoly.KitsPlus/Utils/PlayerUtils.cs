@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Anomoly.KitsPlus.Utils
 {
-    public static class PlayerInventoryUtils
+    public static class PlayerUtils
     {
         public static List<KitItem> GetKitItemsFromInventory(this UnturnedPlayer player)
         {

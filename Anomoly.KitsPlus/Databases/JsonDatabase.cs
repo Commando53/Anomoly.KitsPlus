@@ -42,6 +42,7 @@ namespace Anomoly.KitsPlus.Databases
                         XP = null,
                         Vehicle = null,
                         Cooldown = 300,
+                        MaxUsage = 0,
                         Items = new List<KitItem>()
                         {
                             new KitItem()
@@ -92,7 +93,13 @@ namespace Anomoly.KitsPlus.Databases
         public int DeleteKit(string name)
         {
             var deleted = _kits.RemoveAll(k => k.Name.ToLower() == name.ToLower());
-            SaveJsonFile();
+            
+            if(deleted > 0)
+            {
+                SaveJsonFile();
+                KitsPlusPlugin.Instance.UsageManager.DeleteAllUsages(name);
+            }
+
             return deleted;
         }
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Anomoly.KitsPlus.Commands
 {
@@ -27,10 +28,27 @@ namespace Anomoly.KitsPlus.Commands
         {
             var kits = KitsPlusPlugin.Instance.KitDb.GetKits(caller);
 
-            var names = kits.Select(x => x.Name).ToArray();
+            var config = KitsPlusPlugin.Instance.Configuration.Instance;
+
+            var names = kits.Select(x =>
+            {
+                if(config.KitUsagesEnabled && config.DisplayKitUsagesOnList)
+                {
+                    if(x.MaxUsage > 0)
+                    {
+                        var uses = KitsPlusPlugin.Instance.UsageManager.GetKitUsage(caller.Id, x.Name);
+
+                        var usesLeft = x.MaxUsage - uses;
+
+                        return $"{x.Name}({usesLeft})";
+                    }
+                }
+                return x.Name;
+            }).ToArray();
 
             var msg = names.Length > 0 ? string.Join(",", names) : "No kits available";
 
+            
 
             UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_kits_list", msg), true);
         }

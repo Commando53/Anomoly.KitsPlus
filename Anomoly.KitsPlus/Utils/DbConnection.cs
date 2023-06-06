@@ -71,7 +71,6 @@ namespace Anomoly.KitsPlus.Utils
             return command.ExecuteReader();
         }
 
-
         public void Dispose()
         {
             connection?.Dispose();
