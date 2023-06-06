@@ -2,6 +2,11 @@
 
 A simple kits plugin for RocketMod with extra features including storing kits data in rather JSON or MYSQL
 
+## Dependencies
+
+-   [Optional] MySQL.Data v8.0.33: Required for MySQL database support
+-   [Optional] Kits Plugin (RocketMod): Required to migrate kits from the old Kits plugin
+
 ## Commands
 
 -   `/kits` - Show all available kits
@@ -19,6 +24,9 @@ A simple kits plugin for RocketMod with extra features including storing kits da
 -   `/giftkit <player> <kit name>` - Gift a kit to a player while taking the cooldown yourself
     -   Aliases: None
     -   Permission: `giftkit`
+-   `/migratekits` - Migrate kits from the old Kits plugin
+    -   Aliases: None
+    -   Permission: `migratekits`
 
 ## Configuration
 
