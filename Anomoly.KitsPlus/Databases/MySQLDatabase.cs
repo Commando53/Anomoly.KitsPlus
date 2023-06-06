@@ -19,6 +19,9 @@ namespace Anomoly.KitsPlus.Databases
         public const string KITS_TABLE = "kitsplus_kits";
         public const string KIT_ITEMS_TABLE = "kitsplus_kit_items";
 
+        public string KitsTable => $"{KitsPlusPlugin.Instance.Configuration.Instance.MySQLTablePrefix}_{KITS_TABLE}";
+        public string KitItemsTable => $"{KitsPlusPlugin.Instance.Configuration.Instance.MySQLTablePrefix}_{KIT_ITEMS_TABLE}";
+
         public MySQLDatabase()
         {
             dbConnection = new DbConnection(KitsPlusPlugin.Instance.Configuration.Instance.MySQLConnectionString);
@@ -28,19 +31,19 @@ namespace Anomoly.KitsPlus.Databases
 
         private void CheckSchema()
         {
-            dbConnection.ExecuteUpdate($"CREATE TABLE IF NOT EXISTS `{KITS_TABLE}` (`name` varchar(32) NOT NULL, `vehicle` smallint unsigned, `xp` int unsigned, `cooldown` int, PRIMARY KEY (`name`));");
-            dbConnection.ExecuteUpdate($"CREATE TABLE IF NOT EXISTS `{KIT_ITEMS_TABLE}` (`kit_name` varchar(32) NOT NULL, `id` smallint unsigned, `amount` tinyint unsigned, PRIMARY KEY(`kit_name`,`id`))");
+            dbConnection.ExecuteUpdate($"CREATE TABLE IF NOT EXISTS `{KitsTable}` (`name` varchar(32) NOT NULL, `vehicle` smallint unsigned, `xp` int unsigned, `cooldown` int, PRIMARY KEY (`name`));");
+            dbConnection.ExecuteUpdate($"CREATE TABLE IF NOT EXISTS `{KitItemsTable}` (`kit_name` varchar(32) NOT NULL, `id` smallint unsigned, `amount` tinyint unsigned, PRIMARY KEY(`kit_name`,`id`))");
         }
 
         public bool CreateKit(Kit kit)
         {
-            int affectedRows = dbConnection.ExecuteUpdate($"INSERT INTO `{KITS_TABLE}` (`name`, `vehicle`, `xp`, `cooldown`) VALUES(?,?,?,?);", kit.Name, kit.Vehicle, kit.XP, kit.Cooldown);
+            int affectedRows = dbConnection.ExecuteUpdate($"INSERT INTO `{KitsTable}` (`name`, `vehicle`, `xp`, `cooldown`) VALUES(?,?,?,?);", kit.Name, kit.Vehicle, kit.XP, kit.Cooldown);
             
             if(affectedRows > 0)
             {
                 foreach (var item in kit.Items)
                 {
-                    dbConnection.ExecuteUpdate($"INSERT INTO `{KIT_ITEMS_TABLE}` (`kit_name`, `id`, `amount`) VALUES(?,?,?);", kit.Name, item.Id, item.Amount);
+                    dbConnection.ExecuteUpdate($"INSERT INTO `{KitItemsTable}` (`kit_name`, `id`, `amount`) VALUES(?,?,?);", kit.Name, item.Id, item.Amount);
                 }
 
                 return true;
@@ -51,8 +54,8 @@ namespace Anomoly.KitsPlus.Databases
 
         public int DeleteKit(string name)
         {
-            dbConnection.ExecuteUpdate($"DELETE FROM `{KIT_ITEMS_TABLE}` WHERE `kit_name` = ?", name);
-            return dbConnection.ExecuteUpdate($"DELETE FROM `{KITS_TABLE}` WHERE `name` = ?;", name);
+            dbConnection.ExecuteUpdate($"DELETE FROM `{KitItemsTable}` WHERE `kit_name` = ?", name);
+            return dbConnection.ExecuteUpdate($"DELETE FROM `{KitsTable}` WHERE `name` = ?;", name);
         }
 
         public Kit GetKitByName(string name)
@@ -60,7 +63,7 @@ namespace Anomoly.KitsPlus.Databases
             Kit kit = null;
             try
             {
-                var reader = dbConnection.Execute($"SELECT * FROM `{KITS_TABLE}` WHERE `name` = ? LIMIT 1;", name);
+                var reader = dbConnection.Execute($"SELECT * FROM `{KitsTable}` WHERE `name` = ? LIMIT 1;", name);
                 if (reader.HasRows && reader.Read())
                 {
                     kit = new Kit();
@@ -72,7 +75,7 @@ namespace Anomoly.KitsPlus.Databases
 
                     reader.Close();
 
-                    var itemReader = dbConnection.Execute($"SELECT * FROM `{KIT_ITEMS_TABLE}` WHERE `kit_name` = ?;", name);
+                    var itemReader = dbConnection.Execute($"SELECT * FROM `{KitItemsTable}` WHERE `kit_name` = ?;", name);
 
                     if (itemReader.HasRows)
                     {
@@ -113,7 +116,7 @@ namespace Anomoly.KitsPlus.Databases
             var list = new List<Kit>();
             try
             {
-                var reader = dbConnection.Execute($"SELECT * FROM `{KITS_TABLE}`");
+                var reader = dbConnection.Execute($"SELECT * FROM `{KitsTable}`");
                 if (reader.HasRows)
                 {
                     while (reader.Read())
@@ -135,7 +138,7 @@ namespace Anomoly.KitsPlus.Databases
                 {
                     foreach(var kit in list)
                     {
-                        var kitReader = dbConnection.Execute($"SELECT * FROM `{KIT_ITEMS_TABLE}` WHERE `kit_name` = ?;", kit.Name);
+                        var kitReader = dbConnection.Execute($"SELECT * FROM `{KitItemsTable}` WHERE `kit_name` = ?;", kit.Name);
 
                         if (kitReader.HasRows)
                         {

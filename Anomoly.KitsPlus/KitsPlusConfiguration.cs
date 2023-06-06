@@ -13,6 +13,7 @@ namespace Anomoly.KitsPlus
     {
         public string DatabaseType { get; set; }
         public string MySQLConnectionString { get; set; }
+        public string MySQLTablePrefix { get; set; }
 
         public int GlobalCooldown { get; set; }
         public void LoadDefaults()
@@ -20,6 +21,7 @@ namespace Anomoly.KitsPlus
             DatabaseType = "json";
             GlobalCooldown = 10;
             MySQLConnectionString = "Server=localhost;Port=3306;Database=unturned;Uid=root;Pwd=pwd;";
+            MySQLTablePrefix = "myserver";
         }
     }
 }

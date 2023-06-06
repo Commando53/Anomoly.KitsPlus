@@ -32,6 +32,7 @@ A simple kits plugin for RocketMod with extra features including storing kits da
 
 -   `DatabaseType` - The type of database to use for storing kits data. Valid values are `json` and `mysql`
 -   `MySQLConnectionString` - The connection string to use for connecting to the MySQL database
+-   `MySQLTablePrefix` - The prefix to use for the MySQL database tables
 -   `GlobalCooldown` - The global cooldown for all kits in seconds
 
 ```xml
