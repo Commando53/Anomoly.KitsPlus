@@ -117,7 +117,7 @@ namespace Anomoly.KitsPlus.Databases
 
         public Kit GetKitByName(IRocketPlayer player, string name)
         {
-            if (!player.HasPermission($"kit.{name.ToLower()}"))
+            if (!player.HasPermission($"kit.{name}"))
             {
                 return null;
             }
@@ -178,7 +178,7 @@ namespace Anomoly.KitsPlus.Databases
 
         public List<Kit> GetKits(IRocketPlayer player)
         {
-            return GetKits().Where(k => player.HasPermission($"kit.{k.Name.ToLower()}")).ToList();
+            return GetKits().Where(k => player.HasPermission($"kit.{k.Name}")).ToList();
         }
 
         public void Dispose()
