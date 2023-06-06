@@ -33,6 +33,8 @@ A simple kits plugin for RocketMod with extra features including storing kits da
 -   `DatabaseType` - The type of database to use for storing kits data. Valid values are `json` and `mysql`
 -   `MySQLConnectionString` - The connection string to use for connecting to the MySQL database
 -   `MySQLTablePrefix` - The prefix to use for the MySQL database tables
+-   `KitUsagesEnabled` - Whether or not to track kit usages
+-   `DisplayKitUsagesOnList` - Whether or not to display kit usages on the `/kits` command
 -   `GlobalCooldown` - The global cooldown for all kits in seconds
 
 ```xml
@@ -41,6 +43,8 @@ A simple kits plugin for RocketMod with extra features including storing kits da
   <DatabaseType>json</DatabaseType>
   <MySQLConnectionString>Server=127.0.0.1;Port=3306;Database=unturned;Uid=root;Pwd=pwd;</MySQLConnectionString>
   <MySQLTablePrefix>myserver</MySQLTablePrefix>
+  <KitUsagesEnabled>true</KitUsagesEnabled>
+  <DisplayKitUsagesOnList>true</DisplayKitUsagesOnList>
   <GlobalCooldown>10</GlobalCooldown>
 </KitsPlusConfiguration>
 ```
@@ -52,17 +56,24 @@ A simple kits plugin for RocketMod with extra features including storing kits da
 -   `command_kit_global_cooldown` - The message sent to the player when they are on a global cooldown
 -   `command_kit_cooldown` - The message sent to the player when they are on a kit cooldown
 -   `command_kit_redeemed` - The message sent to the player when they successfully redeem a kit
+-   `command_kit_max_usage` - The message sent to the player when they have used all of their kit usages
+-   `command_kit_usage_left` - The message sent to the player when they have kit usages left
+
 -   `command_kits_list` - The message sent to the player when they list all available kits
+
 -   `command_createkit_invalid` - The message sent to the player when they do not specify a kit name
 -   `command_createkit_created` - The message sent to the player when they successfully create a kit
+-   `command_createkit_existing_name` - The message sent to the player when they try to create a kit with an existing name
+-   `command_createkit_failed` - The message sent to the player when they fail to create a kit
+
 -   `command_giftkit_invalid` - The message sent to the player when they do not specify a kit name
 -   `command_giftkit_no_player` - The message sent to the player when the player they specified does not exist
-
 -   `command_giftkit_no_kit` - The message sent to the player when the kit they specified does not exist
 -   `command_giftkit_success` - The message sent to the player when they successfully gift a kit
 -   `command_giftkit_failed` - The message sent to the player when they fail to gift a kit
 -   `command_giftkit_gifted` - The message sent to the player when they are gifted a kit
 -   `command_giftkit_self` - The message sent to the player when they try to gift themselves a kit
+
 -   `command_deletekit_invalid` - The message sent to the player when they do not specify a kit name
 -   `command_deletekit_deleted` - The message sent to the player when they successfully delete a kit
 
@@ -74,9 +85,16 @@ A simple kits plugin for RocketMod with extra features including storing kits da
   <Translation Id="command_kit_global_cooldown" Value="Please wait {0} seconds before redeeming another kit." />
   <Translation Id="command_kit_cooldown" Value="Please wait {0} seconds before redeeming the '{1}' kit again." />
   <Translation Id="command_kit_redeemed" Value="You have successfully redeemed the '{0}' kit!" />
+  <Translation Id="command_kit_max_usage" Value="You have used {0}/{0} uses of the '{1}'!" />
+  <Translation Id="command_kit_usage_left" Value="You have {0} uses left!" />
+
   <Translation Id="command_kits_list" Value="Available kits: {0}" />
+
   <Translation Id="command_createkit_invalid" Value="Please do /createkit {0}!" />
+  <Translation Id="command_createkit_existing_name" Value="A kit already exists with the name of '{0}'!" />
   <Translation Id="command_createkit_created" Value="Successfully created the '{0}' kit!" />
+  <Translation Id="command_createkit_failed" Value="Failed to create '{0}' kit." />
+
   <Translation Id="command_giftkit_invalid" Value="Please do /givekit {0}!" />
   <Translation Id="command_giftkit_no_player" Value="No player could be found by the name of '{0}'." />
   <Translation Id="command_giftkit_no_kit" Value="No kit could be found by the name of '{0}'." />
@@ -84,8 +102,12 @@ A simple kits plugin for RocketMod with extra features including storing kits da
   <Translation Id="command_giftkit_failed" Value="Failed to give {0} the '{1}' kit!" />
   <Translation Id="command_giftkit_gifted" Value="{0} has gifted you their '{1}' kit!" />
   <Translation Id="command_giftkit_self" Value="You cannot gift yourself a kit!" />
+
   <Translation Id="command_deletekit_invalid" Value="Please do /deletekit {0}!" />
   <Translation Id="command_deletekit_deleted" Value="Deleted {0} kit(s) with the name of '{1}'." />
+
+
+
 </Translations>
 ```
 
