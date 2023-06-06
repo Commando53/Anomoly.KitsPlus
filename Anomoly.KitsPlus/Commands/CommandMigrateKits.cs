@@ -51,6 +51,12 @@ namespace Anomoly.KitsPlus.Commands
                 kitsPlugin.Configuration.Instance.Kits.ForEach(k =>
                 {
 
+                    var existingKit = KitsPlusPlugin.Instance.KitDb.GetKitByName(k.Name);
+
+                    if (existingKit != null)
+                        return;
+
+
                     var kitCooldown = k.Cooldown.Value;
 
                     newKits.Add(new Data.Kit()

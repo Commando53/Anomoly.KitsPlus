@@ -43,6 +43,7 @@ namespace Anomoly.KitsPlus.Commands
                         return $"{x.Name}({usesLeft})";
                     }
                 }
+
                 return x.Name;
             }).ToArray();
 

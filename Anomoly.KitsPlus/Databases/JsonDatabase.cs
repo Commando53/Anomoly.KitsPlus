@@ -63,8 +63,8 @@ namespace Anomoly.KitsPlus.Databases
                         }
                     }
                 };
-                File.WriteAllText(_file, JsonConvert.SerializeObject(defaultState, Formatting.Indented));
                 _kits = defaultState;
+                SaveJsonFile();
                 return;
             }
 
@@ -111,9 +111,8 @@ namespace Anomoly.KitsPlus.Databases
 
         public List<Kit> GetKits()
             => _kits;
-
         public List<Kit> GetKits(IRocketPlayer player)
-            => _kits.Where(k => player.HasPermission($"kit.${k.Name}")).ToList();
+            => GetKits().Where(k => player.HasPermission($"kit.{k.Name}")).ToList();
 
         public void Dispose()
         {
