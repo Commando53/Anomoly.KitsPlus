@@ -1,4 +1,5 @@
 ﻿using Anomoly.KitsPlus.Data;
+using Anomoly.KitsPlus.Utils;
 using Newtonsoft.Json;
 using Rocket.API;
 using Rocket.Core.Logging;
@@ -13,7 +14,7 @@ namespace Anomoly.KitsPlus.Databases
 {
     public class JsonDatabase : IKitDatabase
     {
-        private List<Kit> _kits;
+        private JsonFileDb<List<Kit>> _kits;
 
         private string _file;
 
@@ -26,17 +27,9 @@ namespace Anomoly.KitsPlus.Databases
             var directory = KitsPlusPlugin.Instance.Directory;
             _file = Path.Combine(directory, "kits_data.json");
 
-            Logger.Log("Initializing JsonDatabase...");
-            LoadOrCreateJsonFile();
-        }
-
-        private void LoadOrCreateJsonFile()
-        {
-            if (!File.Exists(_file))
+            _kits = new JsonFileDb<List<Kit>>(_file, new List<Kit>()
             {
-                var defaultState = new List<Kit>()
-                {
-                    new Kit()
+                new Kit()
                     {
                         Name ="Survival",
                         XP = null,
@@ -62,21 +55,10 @@ namespace Anomoly.KitsPlus.Databases
                             }
                         }
                     }
-                };
-                _kits = defaultState;
-                SaveJsonFile();
-                return;
-            }
+            });
 
-            var json = File.ReadAllText(_file);
-
-            _kits = JsonConvert.DeserializeObject<List<Kit>>(json);
-        }
-
-        private void SaveJsonFile()
-        {
-            var json = JsonConvert.SerializeObject(_kits, Formatting.Indented);
-            File.WriteAllText(_file, json);
+            Logger.Log("Initializing JsonDatabase...");
+            _kits.Load();
         }
 
         public bool CreateKit(Kit kit)
@@ -85,18 +67,18 @@ namespace Anomoly.KitsPlus.Databases
             if (existingKit != null)
                 return false;
 
-            _kits.Add(kit);
-            SaveJsonFile();
+            _kits.Instance.Add(kit);
+            _kits.Save();
             return true;
         }
 
         public int DeleteKit(string name)
         {
-            var deleted = _kits.RemoveAll(k => k.Name.ToLower() == name.ToLower());
+            var deleted = _kits.Instance.RemoveAll(k => k.Name.ToLower() == name.ToLower());
             
             if(deleted > 0)
             {
-                SaveJsonFile();
+                _kits.Save();
                 KitsPlusPlugin.Instance.UsageManager.DeleteAllUsages(name);
             }
 
@@ -104,19 +86,21 @@ namespace Anomoly.KitsPlus.Databases
         }
 
         public Kit GetKitByName(string name)
-            => _kits.FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
+            => _kits.Instance.FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
 
         public Kit GetKitByName(IRocketPlayer player, string name)
             => GetKits(player).FirstOrDefault(x => x.Name.ToLower() == name.ToLower());
 
         public List<Kit> GetKits()
-            => _kits;
+            => _kits.Instance;
         public List<Kit> GetKits(IRocketPlayer player)
             => GetKits().Where(k => player.HasPermission($"kit.{k.Name}")).ToList();
 
         public void Dispose()
         {
-            SaveJsonFile();
+            Logger.Log("Saving kits....");
+            _kits.Save();
+            _kits = null;
         }
     }
 }

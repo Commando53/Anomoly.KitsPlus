@@ -1,35 +1,46 @@
 ﻿using Anomoly.KitsPlus.Data;
+using Anomoly.KitsPlus.Utils;
 using Rocket.API;
 using Rocket.Core.Logging;
 using Rocket.Unturned.Chat;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Anomoly.KitsPlus.Managers
 {
-    public class CooldownManager
+    public class CooldownManager: IDisposable
     {
-        private Dictionary<string, DateTime> _global;
-        private Dictionary<string, DateTime> _kits;
+        private JsonFileDb<Dictionary<string, DateTime>> _global;
+        private JsonFileDb<Dictionary<string, DateTime>> _kits;
 
         public int GlobalCooldown => KitsPlusPlugin.Instance.Configuration.Instance.GlobalCooldown;
 
         public CooldownManager()
         {
             Logger.Log("Initializing CooldownManager...");
-            _global = new Dictionary<string, DateTime>();
-            _kits = new Dictionary<string, DateTime>();
+
+            var directory = KitsPlusPlugin.Instance.Directory;
+            var globalFile = Path.Combine(directory, "kit_cooldowns_g.json");
+            var kitsFile = Path.Combine(directory, "kits_cooldowns_k.json");
+
+
+            _global = new JsonFileDb<Dictionary<string, DateTime>>(globalFile, new Dictionary<string, DateTime>());
+            _kits = new JsonFileDb<Dictionary<string, DateTime>>(kitsFile, new Dictionary<string, DateTime>());
+
+            _global.Load();
+            _kits.Load();
         }
 
 
         public int GetTimeLeftForGlobal(string playerId)
         {
-            if (_global.ContainsKey(playerId))
+            if (_global.Instance.ContainsKey(playerId))
             {
-                var start = _global[playerId];
+                var start = _global.Instance[playerId];
 
                 var waitTime = (DateTime.Now - start).TotalSeconds;
 
@@ -38,7 +49,7 @@ namespace Anomoly.KitsPlus.Managers
                 if (timeLeft <= 0)
                 {
                     timeLeft = 0;
-                    _global.Remove(playerId);
+                    _global.Instance.Remove(playerId);
                 }
 
                 return timeLeft;
@@ -52,17 +63,17 @@ namespace Anomoly.KitsPlus.Managers
             if (GlobalCooldown <= 0)
                 return;
 
-            if (_global.ContainsKey(playerId))
-                _global[playerId] = DateTime.Now;
+            if (_global.Instance.ContainsKey(playerId))
+                _global.Instance[playerId] = DateTime.Now;
             else
-                _global.Add(playerId, DateTime.Now);
+                _global.Instance.Add(playerId, DateTime.Now);
         }
 
         public int GetTimeLeftForKit(IRocketPlayer player, string kitName)
         {
             var key = $"{player.Id}_{kitName}".ToLower();
 
-            if (!_kits.ContainsKey(key))
+            if (!_kits.Instance.ContainsKey(key))
                 return 0;
 
             var kit = KitsPlusPlugin.Instance.KitDb.GetKitByName(player, kitName);
@@ -70,7 +81,7 @@ namespace Anomoly.KitsPlus.Managers
             if (kit == null)
                 return 0;
 
-            var start = _kits[key];
+            var start = _kits.Instance[key];
 
             var waitTime = (DateTime.Now - start).TotalSeconds;
 
@@ -80,7 +91,7 @@ namespace Anomoly.KitsPlus.Managers
             {
                 timeLeft = 0;
 
-                _kits.Remove(key);
+                _kits.Instance.Remove(key);
             }
 
             return timeLeft;
@@ -95,12 +106,12 @@ namespace Anomoly.KitsPlus.Managers
 
             var key = $"{player.Id}_{kitName}".ToLower();
 
-            if (_kits.ContainsKey(key))
+            if (_kits.Instance.ContainsKey(key))
             {
-                _kits.Remove(key);
+                _kits.Instance.Remove(key);
             }
 
-            _kits.Add(key, DateTime.Now);
+            _kits.Instance.Add(key, DateTime.Now);
         }
 
         public bool CheckCooldown(IRocketPlayer player, Kit kit)
@@ -123,6 +134,17 @@ namespace Anomoly.KitsPlus.Managers
             }
 
             return false;
+        }
+
+        public void Dispose()
+        {
+            Logger.Log("Saving global cooldowns...");
+            _global.Save();
+            _global = null;
+
+            Logger.Log("Saving kit cooldowns...");
+            _kits.Save();
+            _kits = null;
         }
     }
 }

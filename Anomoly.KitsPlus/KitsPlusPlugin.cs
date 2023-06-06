@@ -1,14 +1,8 @@
-﻿using Anomoly.KitsPlus.Data;
-using Anomoly.KitsPlus.Databases;
+﻿using Anomoly.KitsPlus.Databases;
 using Anomoly.KitsPlus.Managers;
 using Rocket.API.Collections;
 using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Anomoly.KitsPlus
 {
@@ -45,7 +39,6 @@ namespace Anomoly.KitsPlus
 
             Logger.Log($"{string.Format("KitsPlus v{0}", Assembly.GetName().Version.ToString())} by Anomoly has loaded!");
             Logger.Log("Need support? Join my Discord @ https://discord.gg/rVH9e7Kj9y");
-            Logger.LogWarning("When reloading, cooldowns will refresh");
         }
 
         protected override void Unload()
@@ -53,7 +46,13 @@ namespace Anomoly.KitsPlus
             base.Unload();
 
             Instance = null;
+
+            CooldownManager.Dispose();
             CooldownManager = null;
+
+            UsageManager.Dispose();
+            UsageManager = null;
+            
             KitDb.Dispose();
             KitDb = null;
 
