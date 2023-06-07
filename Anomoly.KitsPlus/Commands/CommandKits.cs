@@ -47,7 +47,7 @@ namespace Anomoly.KitsPlus.Commands
                 return x.Name;
             }).ToArray();
 
-            var msg = names.Length > 0 ? string.Join(",", names) : "No kits available";
+            var msg = names.Length > 0 ? string.Join(", ", names) : "No kits available";
 
             
 
