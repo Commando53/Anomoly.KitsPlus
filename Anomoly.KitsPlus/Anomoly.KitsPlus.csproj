@@ -142,6 +142,7 @@
     <Compile Include="Utils\DbConnection.cs" />
     <Compile Include="Utils\JsonFileDb.cs" />
     <Compile Include="Utils\PlayerUtils.cs" />
+    <Compile Include="Utils\TimeSpanUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="lib\" />

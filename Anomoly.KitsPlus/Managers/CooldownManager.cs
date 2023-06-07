@@ -121,7 +121,7 @@ namespace Anomoly.KitsPlus.Managers
 
             if (globalTimeLeft > 0)
             {
-                UnturnedChat.Say(player, KitsPlusPlugin.Instance.Translate("command_kit_global_cooldown", globalTimeLeft), true);
+                UnturnedChat.Say(player, KitsPlusPlugin.Instance.Translate("command_kit_global_cooldown", TimeSpan.FromSeconds(globalTimeLeft).ToReadableString()), true);
                 return true;
             }
 
@@ -129,7 +129,7 @@ namespace Anomoly.KitsPlus.Managers
 
             if (kitTimeLeft > 0)
             {
-                UnturnedChat.Say(player, KitsPlusPlugin.Instance.Translate("command_kit_cooldown", kitTimeLeft, kit.Name), true);
+                UnturnedChat.Say(player, KitsPlusPlugin.Instance.Translate("command_kit_cooldown", TimeSpan.FromSeconds(kitTimeLeft).ToReadableString(), kit.Name), true);
                 return true;
             }
 
