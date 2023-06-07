@@ -64,8 +64,8 @@ namespace Anomoly.KitsPlus
         {
             {"command_kit_invalid", "Please do /kit {0}!" },
             {"command_kit_not_found", "Kit not found! View available kits using /kits" },
-            {"command_kit_global_cooldown", "Please wait {0} seconds before redeeming another kit." },
-            {"command_kit_cooldown","Please wait {0} seconds before redeeming the '{1}' kit again." },
+            {"command_kit_global_cooldown", "Please wait {0} before redeeming another kit." },
+            {"command_kit_cooldown","Please wait {0} before redeeming the '{1}' kit again." },
             {"command_kit_max_usage","You have used {0}/{0} uses of the '{1}' kit!" },
             {"command_kit_usage_left", "You have {0} uses left!" },
             {"command_kit_redeemed","You have successfully redeemed the '{0}' kit!" },
