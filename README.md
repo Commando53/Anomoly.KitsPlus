@@ -77,13 +77,17 @@ A simple kits plugin for RocketMod with extra features including storing kits da
 -   `command_deletekit_invalid` - The message sent to the player when they do not specify a kit name
 -   `command_deletekit_deleted` - The message sent to the player when they successfully delete a kit
 
+-   `command_migratekits_migrated` - The message sent to the player when they successfully migrate kits
+-   `command_migratekits_warning` - The message sent to the player when they need to remove the old Kits plugin
+-   `command_migratekits_no_plugin` - The message sent to the player when they fail to find the old Kits plugin
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <Translations xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Translation Id="command_kit_invalid" Value="Please do /kit {0}!" />
   <Translation Id="command_kit_not_found" Value="Kit not found! View available kits using /kits" />
-  <Translation Id="command_kit_global_cooldown" Value="Please wait {0} seconds before redeeming another kit." />
-  <Translation Id="command_kit_cooldown" Value="Please wait {0} seconds before redeeming the '{1}' kit again." />
+  <Translation Id="command_kit_global_cooldown" Value="Please wait {0} before redeeming another kit." />
+  <Translation Id="command_kit_cooldown" Value="Please wait {0} before redeeming the '{1}' kit again." />
   <Translation Id="command_kit_redeemed" Value="You have successfully redeemed the '{0}' kit!" />
   <Translation Id="command_kit_max_usage" Value="You have used {0}/{0} uses of the '{1}'!" />
   <Translation Id="command_kit_usage_left" Value="You have {0} uses left!" />
@@ -106,8 +110,9 @@ A simple kits plugin for RocketMod with extra features including storing kits da
   <Translation Id="command_deletekit_invalid" Value="Please do /deletekit {0}!" />
   <Translation Id="command_deletekit_deleted" Value="Deleted {0} kit(s) with the name of '{1}'." />
 
-
-
+  <Translation Id="command_migratekits_migrated" Value="Migrated {0} kits succesfully with {1} failures. " />
+  <Translation Id="command_migratekits_warning" Value="Please shutdown the server and remove the old Kits plugin. Restart only after removing!" />
+  <Translation Id="command_migratekits_no_plugin" Value="Failed to find Kits plugin. Please make sure to restart the server with the plugin installed." />
 </Translations>
 ```
 
