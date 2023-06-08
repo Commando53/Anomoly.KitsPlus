@@ -35,7 +35,8 @@ namespace Anomoly.KitsPlus.Commands
                 case "all":
                     KitsPlusPlugin.Instance.KitManager.Reset();
                     KitsPlusPlugin.Instance.CooldownManager.Reset();
-                    KitsPlusPlugin.Instance.UsageManager.Reset();
+                    if(KitsPlusPlugin.Instance.Configuration.Instance.KitUsagesEnabled)
+                        KitsPlusPlugin.Instance.UsageManager.Reset();
                     UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_resetkits_all"), true);
                     break;
                 case "cooldowns":
