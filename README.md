@@ -80,6 +80,11 @@ A simple kits plugin for RocketMod with extra features including storing kits da
 -   `command_migratekits_migrated` - The message sent to the player when they successfully migrate kits
 -   `command_migratekits_warning` - The message sent to the player when they need to remove the old Kits plugin
 -   `command_migratekits_no_plugin` - The message sent to the player when they fail to find the old Kits plugin
+-   `command_resetkits_invalid` - The message sent to the player when the input is invalid
+-   `command_resetkits_all` - The message sent to the player when all managers have been reset
+-   `command_resetkits_cooldowns` - The message sent to the player when cooldowns have been reset
+-   `command_resetkits_usages` - The message sent to the player when usages have been reset
+-   `command_resetkits_usages_disabled` The message sent when reseting usages fails.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -113,6 +118,12 @@ A simple kits plugin for RocketMod with extra features including storing kits da
   <Translation Id="command_migratekits_migrated" Value="Migrated {0} kits succesfully with {1} failures. " />
   <Translation Id="command_migratekits_warning" Value="Please shutdown the server and remove the old Kits plugin. Restart only after removing!" />
   <Translation Id="command_migratekits_no_plugin" Value="Failed to find Kits plugin. Please make sure to restart the server with the plugin installed." />
+    
+  <Translation Id="command_resetkits_invalid" Value="Please do /resetkits {0}!" />
+  <Translation Id="command_resetkits_all" Value="Reset kits data, cooldowns, and usages!" />
+  <Translation Id="command_resetkits_cooldowns" Value="Reset kit &amp; global cooldowns!" />
+  <Translation Id="command_resetkits_usages" Value="Reset kit usages!" />
+  <Translation Id="command_resetkits_usages_disabled" Value="Failed to reset kit usages as Kit Usages are disabled!" />
 </Translations>
 ```
 
@@ -123,25 +134,10 @@ A simple kits plugin for RocketMod with extra features including storing kits da
 KitsPlus exposes an API for other plugins to use. The API is exposed through the `KitsPlus.Instance` property.
 
 ```csharp
-
-KitsPlusPlugin.Instance.KitDb // The database used for storing kits data
+KitsPlusPlugin.Instance.KitManager // The manager of Kits & their items
+KitsPlusPlugin.Instance.UsageManager // The manager to keep track of kit usages
+KitsPlusPlugin.Instance.CooldownManager //The manager to keep track of global & individual kit cooldowns.
 KitsPlusPlugin.Instance.Configuration // The configuration used for the plugin
-```
-
-```csharp
-public interface IKitDatabase: IDisposable
-{
-    string Name { get; }
-
-    List<Kit> GetKits();
-    List<Kit> GetKits(IRocketPlayer player);
-
-    Kit GetKitByName(string name);
-    Kit GetKitByName(IRocketPlayer player, string name);
-
-    bool CreateKit(Kit kit);
-    int DeleteKit(string name);
-}
 ```
 
 ### Models
@@ -152,6 +148,7 @@ Kit
 -   XP: The amount of XP to give the player
 -   Vehicle: The vehicle to give the player
 -   Cooldown: The cooldown of the kit in seconds
+-   MaxUsage: The max amount of uses for the kit
 -   Items: The items to give the player
 
 ```csharp
@@ -165,6 +162,8 @@ public class Kit
     public ushort? Vehicle { get; set; }
 
     public int Cooldown { get; set; }
+    
+    public int MaxUsage { get; set; } = 0;
 
     public List<KitItem> Items { get; set; }
 }
