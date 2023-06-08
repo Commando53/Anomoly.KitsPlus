@@ -1,4 +1,5 @@
-﻿using Anomoly.KitsPlus.Databases;
+﻿using Anomoly.Core.Library.UnturnedStore;
+using Anomoly.KitsPlus.Databases;
 using Anomoly.KitsPlus.Managers;
 using Rocket.API.Collections;
 using Rocket.Core.Logging;
@@ -14,6 +15,8 @@ namespace Anomoly.KitsPlus
         public CooldownManager CooldownManager { get; private set; }
         public UsageManager UsageManager { get; private set; }
 
+        public const int US_PLUGIN_ID = 1470;
+
         protected override void Load()
         {
             base.Load();
@@ -27,6 +30,10 @@ namespace Anomoly.KitsPlus
 
             Logger.Log($"{string.Format("KitsPlus v{0}", Assembly.GetName().Version.ToString())} by Anomoly has loaded!");
             Logger.Log("Need support? Join my Discord @ https://discord.gg/rVH9e7Kj9y");
+
+            bool isUpdateToDate = UnturnedStoreAPI.IsUpdateToDate(US_PLUGIN_ID, Assembly.GetName().Version);
+            if (!isUpdateToDate)
+                Logger.LogWarning("[Update Detected] KitsPlus has an update! Please download the latest version @ https://unturnedstore.com/products/1470");
         }
 
         protected override void Unload()
