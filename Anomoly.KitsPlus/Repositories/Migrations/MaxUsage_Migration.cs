@@ -13,13 +13,13 @@ namespace Anomoly.KitsPlus.Databases.Migrations
 
         public void Down(DbConnection connection)
         {
-            var table = MySQLDatabase.KitsTable;
+            var table = MySQLRepository.KitsTable;
             connection.ExecuteUpdate($"ALTER TABLE `{table}` DROP COLUMN `maxusage`;");
         }
 
         public void Up(DbConnection connection)
         {
-            var table = MySQLDatabase.KitsTable;
+            var table = MySQLRepository.KitsTable;
 
             connection.ExecuteUpdate($"ALTER TABLE `{table}` ADD `maxusage` int NOT NULL DEFAULT(0);");
         }

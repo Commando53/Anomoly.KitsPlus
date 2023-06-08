@@ -36,7 +36,7 @@ namespace Anomoly.KitsPlus.Commands
 
             var kitName = command[0];
 
-            var kit = KitsPlusPlugin.Instance.KitDb.GetKitByName(caller, kitName);
+            var kit = KitsPlusPlugin.Instance.KitManager.GetPlayerKit(caller, kitName);
 
             if(kit == null)
             {
@@ -56,27 +56,8 @@ namespace Anomoly.KitsPlus.Commands
             if (isOnCooldown)
                 return;
 
-            bool success = caller.GiveKit(kit);
-
-
-
-            if(success)
-            {
-                UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_kit_redeemed", kit.Name), true);
-                
-                if(kit.Cooldown > 0)
-                    KitsPlusPlugin.Instance.CooldownManager.SetKitCooldown(caller, kit.Name);
-                if (KitsPlusPlugin.Instance.Configuration.Instance.GlobalCooldown > 0)
-                    KitsPlusPlugin.Instance.CooldownManager.SetGlobalCooldown(caller.Id);
-                if (usageEnabled)
-                {
-                    KitsPlusPlugin.Instance.UsageManager.AddUsage(caller.Id, kit.Name);
-                    
-                    var uses = KitsPlusPlugin.Instance.UsageManager.GetKitUsage(caller.Id, kit.Name);
-                    UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_kit_usage_left", (kit.MaxUsage - uses)), true);
-                }
-                    
-            }
+            KitsPlusPlugin.Instance.KitManager.GiveKit(caller, kit);
+            UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_kit_redeemed", kit.Name), true);
         }
     }
 }

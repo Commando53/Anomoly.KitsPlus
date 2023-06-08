@@ -12,54 +12,13 @@ using System.Threading.Tasks;
 
 namespace Anomoly.KitsPlus.Databases
 {
-    public class JsonDatabase : IKitDatabase
+    public class JsonRepository : IKitRepository
     {
         private JsonFileDb<List<Kit>> _kits;
 
         private string _file;
 
-
         public string Name => "Json";
-
-
-        public JsonDatabase()
-        {
-            var directory = KitsPlusPlugin.Instance.Directory;
-            _file = Path.Combine(directory, "kits_data.json");
-
-            _kits = new JsonFileDb<List<Kit>>(_file, new List<Kit>()
-            {
-                new Kit()
-                    {
-                        Name ="Survival",
-                        XP = null,
-                        Vehicle = null,
-                        Cooldown = 300,
-                        MaxUsage = 0,
-                        Items = new List<KitItem>()
-                        {
-                            new KitItem()
-                            {
-                                Id = 251,
-                                Amount = 1,
-                            },
-                            new KitItem()
-                            {
-                                Id = 81,
-                                Amount = 2,
-                            },
-                            new KitItem()
-                            {
-                                Id = 16,
-                                Amount = 1,
-                            }
-                        }
-                    }
-            });
-
-            Logger.Log("Initializing JsonDatabase...");
-            _kits.Load();
-        }
 
         public bool CreateKit(Kit kit)
         {
@@ -77,10 +36,7 @@ namespace Anomoly.KitsPlus.Databases
             var deleted = _kits.Instance.RemoveAll(k => k.Name.ToLower() == name.ToLower());
             
             if(deleted > 0)
-            {
                 _kits.Save();
-                KitsPlusPlugin.Instance.UsageManager.DeleteAllUsages(name);
-            }
 
             return deleted;
         }
@@ -101,6 +57,23 @@ namespace Anomoly.KitsPlus.Databases
             Logger.Log("Saving kits....");
             _kits.Save();
             _kits = null;
+        }
+
+        public void Initialize(Kit[] defaultKits)
+        {
+            var directory = KitsPlusPlugin.Instance.Directory;
+            _file = Path.Combine(directory, "kits_data.json");
+
+            _kits = new JsonFileDb<List<Kit>>(_file, defaultKits.ToList());
+
+            Logger.Log("Initializing JsonDatabase...");
+            _kits.Load();
+        }
+
+        public void Reset()
+        {
+            _kits.Instance.Clear();
+            _kits.Save();
         }
     }
 }

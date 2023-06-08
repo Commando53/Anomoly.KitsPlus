@@ -10,31 +10,19 @@ namespace Anomoly.KitsPlus
     {
         public static KitsPlusPlugin Instance { get; private set; }
 
+        public KitManager KitManager { get; private set; }
         public CooldownManager CooldownManager { get; private set; }
         public UsageManager UsageManager { get; private set; }
-        public IKitDatabase KitDb { get; set; }
 
         protected override void Load()
         {
             base.Load();
 
             Instance = this;
+            KitManager = new KitManager();
             CooldownManager = new CooldownManager();
-            UsageManager = new UsageManager();
-
-            switch (Configuration.Instance.DatabaseType.ToLower())
-            {
-                case "json":
-                    KitDb = new JsonDatabase();
-                    break;
-                case "mysql":
-                    KitDb = new MySQLDatabase();
-                    break;
-                default:
-                    Logger.Log("Defaulted to JSON DB");
-                    KitDb = new JsonDatabase();
-                    break;
-            }
+            if(Configuration.Instance.KitUsagesEnabled)
+                UsageManager = new UsageManager();
 
 
             Logger.Log($"{string.Format("KitsPlus v{0}", Assembly.GetName().Version.ToString())} by Anomoly has loaded!");
@@ -52,9 +40,9 @@ namespace Anomoly.KitsPlus
 
             UsageManager.Dispose();
             UsageManager = null;
-            
-            KitDb.Dispose();
-            KitDb = null;
+
+            KitManager.Dispose();
+            KitManager = null;
 
             Logger.Log("KitsPlus by Anomoly has unloaded!");
             Logger.Log("Need support? Join my Discord @ https://discord.gg/rVH9e7Kj9y");
@@ -78,14 +66,18 @@ namespace Anomoly.KitsPlus
             {"command_giftkit_no_player","No player could be found by the name of '{0}'." },
             {"command_giftkit_no_kit", "No kit could be found by the name of '{0}'." },
             {"command_giftkit_success","Successfully given your '{0}' kit to {1}" },
-            {"command_giftkit_failed","Failed to give {0} the '{1}' kit!" },
             {"command_giftkit_gifted","{0} has gifted you their '{1}' kit!" },
             {"command_giftkit_self","You cannot gift yourself a kit!" },
             {"command_deletekit_invalid","Please do /deletekit {0}!" },
-            {"command_deletekit_deleted","Deleted {0} kit(s) with the name of '{1}'." },
+            {"command_deletekit_deleted","Kit '{0}' deleted: {1}." },
             {"command_migratekits_migrated","Migrated {0} kits succesfully with {1} failures. " },
             {"command_migratekits_warning","Please shutdown the server and remove the old Kits plugin. Restart only after removing!" },
-            {"command_migratekits_no_plugin","Failed to find Kits plugin. Please make sure to restart the server with the plugin installed." }
+            {"command_migratekits_no_plugin","Failed to find Kits plugin. Please make sure to restart the server with the plugin installed." },
+            {"command_resetkits_invalid","Please do /resetkits {0}!" },
+            {"command_resetkits_all", "Reset kits data, cooldowns, and usages!" },
+            {"command_resetkits_cooldowns", "Reset kit & global cooldowns!" },
+            {"command_resetkits_usages", "Reset kit usages!" },
+            {"command_resetkits_usages_disabled", "Failed to reset kit usages as Kit Usages are disabled!" }
         };
     }
 }

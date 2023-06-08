@@ -51,7 +51,7 @@ namespace Anomoly.KitsPlus.Commands
                 kitsPlugin.Configuration.Instance.Kits.ForEach(k =>
                 {
 
-                    var existingKit = KitsPlusPlugin.Instance.KitDb.GetKitByName(k.Name);
+                    var existingKit = KitsPlusPlugin.Instance.KitManager.GetKit(k.Name);
 
                     if (existingKit != null)
                         return;
@@ -85,7 +85,7 @@ namespace Anomoly.KitsPlus.Commands
             int failed = 0;
             newKits.ForEach(k =>
             {
-                var created = KitsPlusPlugin.Instance.KitDb.CreateKit(k);
+                var created = KitsPlusPlugin.Instance.KitManager.CreateKit(k);
                 if (created)
                     migrated++;
                 else

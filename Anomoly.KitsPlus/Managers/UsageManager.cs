@@ -13,6 +13,9 @@ namespace Anomoly.KitsPlus.Managers
         private string _file;
 
         private JsonFileDb<Dictionary<string, int>> _usages;
+
+        private KitManager kitManager;
+
         public UsageManager()
         {
             var directory = KitsPlusPlugin.Instance.Directory;
@@ -21,6 +24,27 @@ namespace Anomoly.KitsPlus.Managers
 
             _usages = new JsonFileDb<Dictionary<string, int>>(_file, new Dictionary<string, int>(), Formatting.None);
             _usages.Load();
+
+            kitManager = KitsPlusPlugin.Instance.KitManager;
+
+            kitManager.OnKitDeleted += KitManager_OnKitDeleted;
+            kitManager.OnKitGifted += KitManager_OnKitGifted;
+            kitManager.OnKitRedeemed += KitManager_OnKitRedeemed;
+        }
+
+        private void KitManager_OnKitRedeemed(Rocket.API.IRocketPlayer player, Data.Kit redeemedKit)
+        {
+            AddUsage(player.Id, redeemedKit.Name);
+        }
+
+        private void KitManager_OnKitGifted(Rocket.API.IRocketPlayer gifter, Rocket.API.IRocketPlayer giftee, Data.Kit giftedKit)
+        {
+            AddUsage(gifter.Id, giftedKit.Name);
+        }
+
+        private void KitManager_OnKitDeleted(string name)
+        {
+            DeleteAllUsages(name);
         }
 
         public int GetKitUsage(string playerId, string kitName)
@@ -65,6 +89,18 @@ namespace Anomoly.KitsPlus.Managers
             Logger.Log("Saving usages...");
             _usages.Save();
             _usages = null;
+
+            kitManager.OnKitDeleted -= KitManager_OnKitDeleted;
+            kitManager.OnKitGifted -= KitManager_OnKitGifted;
+            kitManager.OnKitRedeemed -= KitManager_OnKitRedeemed;
+            kitManager = null;
+        }
+
+
+        public void Reset()
+        {
+            _usages.Instance.Clear();
+            _usages.Save();
         }
     }
 }

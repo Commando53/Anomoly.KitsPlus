@@ -76,7 +76,7 @@ namespace Anomoly.KitsPlus.Commands
                 MaxUsage = maxUsage
             };
 
-            var existingKit = KitsPlusPlugin.Instance.KitDb.GetKitByName(kit.Name);
+            var existingKit = KitsPlusPlugin.Instance.KitManager.GetKit(kit.Name);
 
             if (existingKit != null)
             {
@@ -85,7 +85,7 @@ namespace Anomoly.KitsPlus.Commands
             }
 
 
-            bool createdKit = KitsPlusPlugin.Instance.KitDb.CreateKit(kit);
+            bool createdKit = KitsPlusPlugin.Instance.KitManager.CreateKit(kit);
             if (createdKit)
                 UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_createkit_created", kit.Name), true);
             else

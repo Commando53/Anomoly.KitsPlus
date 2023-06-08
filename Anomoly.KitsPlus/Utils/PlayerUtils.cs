@@ -58,55 +58,5 @@ namespace Anomoly.KitsPlus.Utils
 
             return items;
         }
-
-        public static bool GiveKit(this IRocketPlayer player, Kit kit, bool setCooldown = true)
-        {
-
-            var sortedItems = kit.Items;
-
-            var itemAssets = sortedItems.OrderByDescending(s =>
-            {
-                var itemId = s.Id;
-
-                var asset = Assets.find(EAssetType.ITEM, itemId);
-
-                if (asset is ItemClothingAsset)
-                    return 1;
-                return 0;
-            }).ToList();
-
-            if (setCooldown)
-            {
-                var cMgr = KitsPlusPlugin.Instance.CooldownManager;
-
-                cMgr.SetKitCooldown(player, kit.Name);
-                cMgr.SetGlobalCooldown(player.Id);
-            }
-
-            var uPlayer = (UnturnedPlayer)player;
-
-            foreach (var item in itemAssets)
-            {
-                if (!uPlayer.GiveItem(item.Id, item.Amount))
-                {
-                    Logger.LogError($"Failed giving {player.DisplayName} ({player.Id}) item {item.Id}");
-                }
-            }
-
-            if (kit.Vehicle.HasValue && kit.Vehicle != 0)
-            {
-                if (!uPlayer.GiveVehicle((ushort)kit.Vehicle))
-                {
-                    Logger.LogError($"Failed giving {player.DisplayName} ({player.Id}) vehicle {kit.Vehicle}!");
-                }
-            }
-
-            if (kit.XP.HasValue && kit.XP != 0)
-            {
-                uPlayer.Experience += (uint)kit.XP;
-            }
-
-            return true;
-        }
     }
 }

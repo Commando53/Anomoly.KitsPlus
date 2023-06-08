@@ -33,9 +33,9 @@ namespace Anomoly.KitsPlus.Commands
 
             var kitName = command[0];
 
-            var deleted = KitsPlusPlugin.Instance.KitDb.DeleteKit(kitName);
+            var deleted = KitsPlusPlugin.Instance.KitManager.DeleteKit(kitName);
 
-            UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_deletekit_deleted", deleted, kitName), true);
+            UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_deletekit_deleted", kitName, deleted), true);
         }
     }
 }

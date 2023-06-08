@@ -26,7 +26,7 @@ namespace Anomoly.KitsPlus.Commands
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
-            var kits = KitsPlusPlugin.Instance.KitDb.GetKits(caller);
+            var kits = KitsPlusPlugin.Instance.KitManager.GetPlayerKits(caller);
 
             var config = KitsPlusPlugin.Instance.Configuration.Instance;
 

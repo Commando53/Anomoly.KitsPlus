@@ -56,7 +56,7 @@ namespace Anomoly.KitsPlus.Commands
 
             var kitName = command[1];
 
-            var kit = KitsPlusPlugin.Instance.KitDb.GetKitByName(caller, kitName);
+            var kit = KitsPlusPlugin.Instance.KitManager.GetPlayerKit(caller, kitName);
 
             if(kit == null)
             {
@@ -81,34 +81,8 @@ namespace Anomoly.KitsPlus.Commands
                 return;
 
 
-            bool success = targetPlayer.GiveKit(kit);
-            
-            if (!success)
-            {
+            KitsPlusPlugin.Instance.KitManager.GiveKit(targetPlayer, kit, caller);
 
-                var failedMsg = KitsPlusPlugin.Instance.Translate("command_giftkit_failed", targetPlayer.DisplayName, kit.Name);
-
-                if (isConsolePlayer)
-                {
-                    Logger.LogError(failedMsg);
-                }
-                else
-                {
-                    UnturnedChat.Say(caller, failedMsg, true);
-                }
-               
-                return;
-            }
-
-            if(!isConsolePlayer)
-            {
-                cMgr.SetKitCooldown(caller, kit.Name);
-                cMgr.SetGlobalCooldown(caller.Id);
-
-
-                if (usageEnabled)
-                    KitsPlusPlugin.Instance.UsageManager.AddUsage(caller.Id, kit.Name);
-            }
 
             var msg = KitsPlusPlugin.Instance.Translate("command_giftkit_success", kit.Name, targetPlayer.DisplayName);
 

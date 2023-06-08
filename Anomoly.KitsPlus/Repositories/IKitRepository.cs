@@ -8,17 +8,19 @@ using System.Threading.Tasks;
 
 namespace Anomoly.KitsPlus.Databases
 {
-    public interface IKitDatabase: IDisposable
+    public interface IKitRepository: IDisposable
     {
         string Name { get; }
-        
+
+        void Initialize(Kit[] defaultKits);
+
         List<Kit> GetKits();
-        List<Kit> GetKits(IRocketPlayer player);
 
         Kit GetKitByName(string name);
-        Kit GetKitByName(IRocketPlayer player, string name);
 
         bool CreateKit(Kit kit);
         int DeleteKit(string name);
+
+        void Reset();
     }
 }

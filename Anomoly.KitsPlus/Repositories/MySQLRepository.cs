@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Anomoly.KitsPlus.Databases
 {
-    public class MySQLDatabase : IKitDatabase
+    public class MySQLRepository : IKitRepository
     {
         public string Name => "MySQL";
 
@@ -27,13 +27,6 @@ namespace Anomoly.KitsPlus.Databases
         public static string KitsTable => $"{_tablePrefix}_{KITS_TABLE}";
         public static string KitItemsTable => $"{_tablePrefix}_{KIT_ITEMS_TABLE}";
         public static string MigrationsTable => $"{_tablePrefix}_{MIGRATION_TABLE}";
-
-        public MySQLDatabase()
-        {
-            dbConnection = new DbConnection(KitsPlusPlugin.Instance.Configuration.Instance.MySQLConnectionString);
-            Logger.Log("Initializing MySQLDatabase...");
-            CheckSchema();
-        }
 
         private void CheckSchema()
         {
@@ -122,8 +115,6 @@ namespace Anomoly.KitsPlus.Databases
         {
             dbConnection.ExecuteUpdate($"DELETE FROM `{KitItemsTable}` WHERE `kit_name` = ?", name);
             int deleted = dbConnection.ExecuteUpdate($"DELETE FROM `{KitsTable}` WHERE `name` = ?;", name);
-            if (deleted > 0)
-                KitsPlusPlugin.Instance.UsageManager.DeleteAllUsages(name);
             return deleted;
         }
 
@@ -166,18 +157,6 @@ namespace Anomoly.KitsPlus.Databases
                 }
             }
             catch(Exception ex) { Logger.LogException(ex, "Error getting kit."); }
-            return kit;
-        }
-
-        public Kit GetKitByName(IRocketPlayer player, string name)
-        {
-            if (!player.HasPermission($"kit.{name}"))
-            {
-                return null;
-            }
-
-            var kit = GetKitByName(name);
-
             return kit;
         }
 
@@ -231,14 +210,26 @@ namespace Anomoly.KitsPlus.Databases
             return list;
         }
 
-        public List<Kit> GetKits(IRocketPlayer player)
-        {
-            return GetKits().Where(k => player.HasPermission($"kit.{k.Name}")).ToList();
-        }
 
         public void Dispose()
         {
             dbConnection.Dispose();
+        }
+
+        public void Initialize(Kit[] defaultKits)
+        {
+            dbConnection = new DbConnection(KitsPlusPlugin.Instance.Configuration.Instance.MySQLConnectionString);
+            Logger.Log("Initializing MySQLDatabase...");
+            CheckSchema();
+        }
+
+        public void Reset()
+        {
+            dbConnection.ExecuteUpdate($"DROP TABLE `{KitItemsTable}`;");
+            dbConnection.ExecuteUpdate($"DROP TABLE `{KitsTable}`;");
+            dbConnection.ExecuteUpdate($"DROP TABLE `{MigrationsTable}`;");
+
+            CheckSchema();
         }
     }
 }

@@ -17,6 +17,8 @@ namespace Anomoly.KitsPlus.Managers
         private JsonFileDb<Dictionary<string, DateTime>> _global;
         private JsonFileDb<Dictionary<string, DateTime>> _kits;
 
+        private KitManager kitManager;
+
         public int GlobalCooldown => KitsPlusPlugin.Instance.Configuration.Instance.GlobalCooldown;
 
         public CooldownManager()
@@ -33,8 +35,30 @@ namespace Anomoly.KitsPlus.Managers
 
             _global.Load();
             _kits.Load();
+
+            kitManager = KitsPlusPlugin.Instance.KitManager;
+
+            kitManager.OnKitGifted += KitManager_OnKitGifted;
+            kitManager.OnKitRedeemed += KitManager_OnKitRedeemed;
+            kitManager.OnKitDeleted += KitManager_OnKitDeleted;
         }
 
+        private void KitManager_OnKitDeleted(string name)
+        {
+            RemoveAllKitCooldowns(name);
+        }
+
+        private void KitManager_OnKitRedeemed(IRocketPlayer player, Kit redeemedKit)
+        {
+            SetGlobalCooldown(player.Id);
+            SetKitCooldown(player, redeemedKit.Name);
+        }
+
+        private void KitManager_OnKitGifted(IRocketPlayer gifter, IRocketPlayer giftee, Kit giftedKit)
+        {
+            SetGlobalCooldown(gifter.Id);
+            SetKitCooldown(gifter, giftedKit.Name);
+        }
 
         public int GetTimeLeftForGlobal(string playerId)
         {
@@ -76,7 +100,7 @@ namespace Anomoly.KitsPlus.Managers
             if (!_kits.Instance.ContainsKey(key))
                 return 0;
 
-            var kit = KitsPlusPlugin.Instance.KitDb.GetKitByName(player, kitName);
+            var kit = kitManager.GetPlayerKit(player, kitName);
 
             if (kit == null)
                 return 0;
@@ -99,7 +123,7 @@ namespace Anomoly.KitsPlus.Managers
 
         public void SetKitCooldown(IRocketPlayer player, string kitName)
         {
-            var kit = KitsPlusPlugin.Instance.KitDb.GetKitByName(player, kitName);
+            var kit = KitsPlusPlugin.Instance.KitManager.GetPlayerKit(player, kitName);
 
             if (kit == null)
                 return;
@@ -112,6 +136,13 @@ namespace Anomoly.KitsPlus.Managers
             }
 
             _kits.Instance.Add(key, DateTime.Now);
+        }
+
+        public void RemoveAllKitCooldowns(string kitName)
+        {
+            var keysToDelete = _kits.Instance.Keys.Where(x => x.EndsWith($"_{kitName}")).ToList();
+
+            keysToDelete.ForEach(x => _kits.Instance.Remove(x));
         }
 
         public bool CheckCooldown(IRocketPlayer player, Kit kit)
@@ -145,6 +176,20 @@ namespace Anomoly.KitsPlus.Managers
             Logger.Log("Saving kit cooldowns...");
             _kits.Save();
             _kits = null;
+
+            kitManager.OnKitGifted -= KitManager_OnKitGifted;
+            kitManager.OnKitRedeemed -= KitManager_OnKitRedeemed;
+            kitManager.OnKitDeleted -= KitManager_OnKitDeleted;
+            kitManager = null;
+        }
+
+        public void Reset()
+        {
+            _kits.Instance.Clear();
+            _global.Instance.Clear();
+
+            _kits.Save();
+            _global.Save();
         }
     }
 }
