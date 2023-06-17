@@ -11,8 +11,8 @@ namespace Anomoly.KitsPlus.Utils
         private T _defaultInstance;
         private Formatting _jsonFormatting;
 
-        public T Instance { get; private set; }
-        public JsonFileDb(string filePath, T defaultInstance = null, Formatting jsonFormatting = Formatting.None)
+        public T Instance { get; set; }
+        public JsonFileDb(string filePath, T defaultInstance, Formatting jsonFormatting = Formatting.None)
         {
             _filePath = filePath;
             _defaultInstance = defaultInstance;

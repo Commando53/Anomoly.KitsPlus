@@ -55,7 +55,6 @@ namespace Anomoly.KitsPlus.Databases
         public void Dispose()
         {
             Logger.Log("Saving kits....");
-            _kits.Save();
             _kits = null;
         }
 
@@ -64,7 +63,7 @@ namespace Anomoly.KitsPlus.Databases
             var directory = KitsPlusPlugin.Instance.Directory;
             _file = Path.Combine(directory, "kits_data.json");
 
-            _kits = new JsonFileDb<List<Kit>>(_file, defaultKits.ToList());
+            _kits = new JsonFileDb<List<Kit>>(_file, defaultKits.ToList(), Formatting.Indented);
 
             Logger.Log("Initializing JsonDatabase...");
             _kits.Load();
