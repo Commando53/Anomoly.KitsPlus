@@ -1,9 +1,9 @@
-﻿using Anomoly.Core.Library.UnturnedStore;
 using Anomoly.KitsPlus.Databases;
 using Anomoly.KitsPlus.Managers;
 using Rocket.API.Collections;
 using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
+using fr34kyn01535.Uconomy;
 
 namespace Anomoly.KitsPlus
 {
@@ -30,10 +30,6 @@ namespace Anomoly.KitsPlus
 
             Logger.Log($"{string.Format("KitsPlus v{0}", Assembly.GetName().Version.ToString())} by Anomoly has loaded!");
             Logger.Log("Need support? Join my Discord @ https://discord.gg/rVH9e7Kj9y");
-
-            bool isUpdateToDate = UnturnedStoreAPI.IsUpdateToDate(US_PLUGIN_ID, Assembly.GetName().Version);
-            if (!isUpdateToDate)
-                Logger.LogWarning("[Update Detected] KitsPlus has an update! Please download the latest version @ https://unturnedstore.com/products/1470");
         }
 
         protected override void Unload()
@@ -64,6 +60,8 @@ namespace Anomoly.KitsPlus
             {"command_kit_max_usage","You have used {0}/{0} uses of the '{1}' kit!" },
             {"command_kit_usage_left", "You have {0} uses left!" },
             {"command_kit_redeemed","You have successfully redeemed the '{0}' kit!" },
+            {"command_kit_paid","You have successfully paid '{1} {3}' for the '{0}' kit!" },
+            {"command_kit_not_enough_balance","You dont have enough balance for the '{0}' kit!" },
             {"command_kits_list","Available kits: {0}" },
             {"command_createkit_invalid","Please do /createkit {0}!" },
             {"command_createkit_created","Successfully created the '{0}' kit!" },
