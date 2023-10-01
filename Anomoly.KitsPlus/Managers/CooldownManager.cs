@@ -1,4 +1,4 @@
-﻿using Anomoly.KitsPlus.Data;
+using Anomoly.KitsPlus.Data;
 using Anomoly.KitsPlus.Utils;
 using Rocket.API;
 using Rocket.Core.Logging;
@@ -48,8 +48,16 @@ namespace Anomoly.KitsPlus.Managers
             RemoveAllKitCooldowns(name);
         }
 
-        private void KitManager_OnKitRedeemed(IRocketPlayer player, Kit redeemedKit)
+        private void KitManager_OnKitRedeemed(IRocketPlayer player, Kit redeemedKit, bool wasapaidkit)
         {
+            if (wasapaidkit)
+            {
+                UnturnedChat.Say(player, KitsPlusPlugin.Instance.Translate("command_kit_paid", redeemedKit.Name, redeemedKit.Balance, KitsPlusPlugin.Instance.Configuration.Instance.PreferredCurrencyName), true);
+            }
+            else
+            {
+                UnturnedChat.Say(player, KitsPlusPlugin.Instance.Translate("command_kit_redeemed", redeemedKit.Name), true);
+            }
             SetGlobalCooldown(player.Id);
             SetKitCooldown(player, redeemedKit.Name);
         }
