@@ -1,4 +1,4 @@
-﻿using Rocket.API;
+using Rocket.API;
 
 namespace Anomoly.KitsPlus
 {
@@ -10,10 +10,11 @@ namespace Anomoly.KitsPlus
 
         public bool KitUsagesEnabled { get; set; }
         public bool DisplayKitUsagesOnList { get; set; }
-
+        public string PreferredCurrencyName { get; set; }
         public int GlobalCooldown { get; set; }
         public void LoadDefaults()
         {
+            PreferredCurrencyName = "$";
             DatabaseType = "json";
             MySQLConnectionString = "Server=localhost;Port=3306;Database=unturned;Uid=root;Pwd=pwd;";
             MySQLTablePrefix = "myserver";
