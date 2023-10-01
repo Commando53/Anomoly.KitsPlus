@@ -1,4 +1,4 @@
-﻿using Anomoly.KitsPlus.Managers;
+using Anomoly.KitsPlus.Managers;
 using Rocket.API;
 using Rocket.Unturned.Chat;
 using System;
@@ -32,18 +32,25 @@ namespace Anomoly.KitsPlus.Commands
 
             var names = kits.Select(x =>
             {
-                if(config.KitUsagesEnabled && config.DisplayKitUsagesOnList)
+                var balance = x.Balance;
+                if (config.KitUsagesEnabled && config.DisplayKitUsagesOnList)
                 {
                     if(x.MaxUsage > 0)
                     {
                         var uses = KitsPlusPlugin.Instance.UsageManager.GetKitUsage(caller.Id, x.Name);
 
                         var usesLeft = x.MaxUsage - uses;
-
+                        if(balance > 0)
+                        {
+                            return $"{x.Name}({balance}{KitsPlusPlugin.Instance.Configuration.Instance.PreferredCurrencyName})({usesLeft})";
+                        }
                         return $"{x.Name}({usesLeft})";
                     }
                 }
-
+                if (balance > 0)
+                {
+                    return $"{x.Name}({balance}{KitsPlusPlugin.Instance.Configuration.Instance.PreferredCurrencyName})";
+                }
                 return x.Name;
             }).ToArray();
 
