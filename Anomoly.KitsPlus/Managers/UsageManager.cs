@@ -1,4 +1,4 @@
-﻿using Anomoly.KitsPlus.Utils;
+using Anomoly.KitsPlus.Utils;
 using Newtonsoft.Json;
 using Rocket.Core.Logging;
 using System;
@@ -32,7 +32,7 @@ namespace Anomoly.KitsPlus.Managers
             kitManager.OnKitRedeemed += KitManager_OnKitRedeemed;
         }
 
-        private void KitManager_OnKitRedeemed(Rocket.API.IRocketPlayer player, Data.Kit redeemedKit)
+        private void KitManager_OnKitRedeemed(Rocket.API.IRocketPlayer player, Data.Kit redeemedKit, bool wasapaidkit)
         {
             AddUsage(player.Id, redeemedKit.Name);
         }
