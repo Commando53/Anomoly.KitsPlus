@@ -27,8 +27,7 @@ namespace Anomoly.KitsPlus.Commands
         {
             if(command.Length == 0 || command.Length > 1)
             {
-                UnturnedChat.Say(caller, KitsPlusPlugin.Instance.
-                    ("command_deletekit_invalid", Syntax), true);
+                UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_deletekit_invalid", Syntax), true);
                 return;
             }
 
