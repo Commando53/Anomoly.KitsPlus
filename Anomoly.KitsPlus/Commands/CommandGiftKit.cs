@@ -1,4 +1,4 @@
-﻿using Anomoly.KitsPlus.Managers;
+using Anomoly.KitsPlus.Managers;
 using Anomoly.KitsPlus.Utils;
 using Rocket.API;
 using Rocket.Core.Logging;
