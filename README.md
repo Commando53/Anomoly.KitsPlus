@@ -1,6 +1,13 @@
-# Anomoly.KitsPlus
+# Anomoly.KitsPlus but i changed everything XP related to uconomy balance (hey anomoly, it would be really cool if you made an official update for uconomy support thanks)
 
 A simple kits plugin for RocketMod with extra features including storing kits data in rather JSON or MYSQL
+this fork will change kits giving xp to kits costing uconomy balance lol.
+
+update checker was also removed
+
+i dont really know exactly how but i would guess migrating from the original kits plugin would make any kits that gives you balance now costs you uconomy balance to use
+i also dont know if gifting kits would work. if you are gonna use this dont give players the permission to gift kits.
+i see this fork more of a uessentials kits to anomoly.kitsplus but you have to migrate manually cause im lazy
 
 ## Dependencies
 
@@ -15,13 +22,13 @@ A simple kits plugin for RocketMod with extra features including storing kits da
 -   `/kit <kit name>` - Redeem a kit by its name
     -   Aliases: None
     -   Permission: `kit`, `kit.<kit name>`
--   `/createkit <name> [<cooldown>] [<vehicle>] [<xp>]` - Create a kit with the specified name and optional cooldown, vehicle, xp, and items from your inventory
+-   `/createkit <name> [<cooldown>] [<vehicle>] [<balance>]` - Create a kit with the specified name and optional cooldown, vehicle, Uconomy Balance Cost, and items from your inventory
     -   Aliases: None
     -   Permission: `createkit`
 -   `/deletekit <name>` - Delete a kit by its name
     -   Aliases: None
     -   Permission: `deletekit`
--   `/giftkit <player> <kit name>` - Gift a kit to a player while taking the cooldown yourself
+-   `/giftkit <player> <kit name>` - Gift a kit to a player while taking the cooldown yourself (I dont think this works properly if you add costs to kits)
     -   Aliases: None
     -   Permission: `giftkit`
 -   `/migratekits` - Migrate kits from the old Kits plugin
@@ -58,6 +65,9 @@ A simple kits plugin for RocketMod with extra features including storing kits da
 -   `command_kit_redeemed` - The message sent to the player when they successfully redeem a kit
 -   `command_kit_max_usage` - The message sent to the player when they have used all of their kit usages
 -   `command_kit_usage_left` - The message sent to the player when they have kit usages left
+
+-   `command_kit_paid` - The message sent to the player when they successfully paid the cost of a kit
+-   `command_kit_not_enough_balance` - The message sent to the player when they dont have enough balance for the kit
 
 -   `command_kits_list` - The message sent to the player when they list all available kits
 
@@ -145,7 +155,7 @@ KitsPlusPlugin.Instance.Configuration // The configuration used for the plugin
 Kit
 
 -   Name: The name of the kit
--   XP: The amount of XP to give the player
+-   Balance: The amount of Balance the kit would cost
 -   Vehicle: The vehicle to give the player
 -   Cooldown: The cooldown of the kit in seconds
 -   MaxUsage: The max amount of uses for the kit
@@ -157,7 +167,7 @@ public class Kit
 {
     public string Name { get; set; }
 
-    public uint? XP { get; set; }
+    public uint? Balance { get; set; }
 
     public ushort? Vehicle { get; set; }
 
