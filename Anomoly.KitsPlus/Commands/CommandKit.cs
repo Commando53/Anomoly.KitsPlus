@@ -1,4 +1,4 @@
-﻿using Anomoly.KitsPlus.Managers;
+using Anomoly.KitsPlus.Managers;
 using Anomoly.KitsPlus.Utils;
 using Rocket.API;
 using Rocket.Core.Logging;
@@ -57,7 +57,6 @@ namespace Anomoly.KitsPlus.Commands
                 return;
 
             KitsPlusPlugin.Instance.KitManager.GiveKit(caller, kit);
-            UnturnedChat.Say(caller, KitsPlusPlugin.Instance.Translate("command_kit_redeemed", kit.Name), true);
         }
     }
 }
