@@ -1,4 +1,4 @@
-﻿using Anomoly.KitsPlus.Data;
+using Anomoly.KitsPlus.Data;
 using Anomoly.KitsPlus.Databases;
 using Rocket.API;
 using Rocket.Core.Logging;
@@ -9,6 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using fr34kyn01535.Uconomy;
+using System.Threading;
+using Rocket.Core.Utils;
+using Rocket.Unturned.Chat;
 
 namespace Anomoly.KitsPlus.Managers
 {
@@ -19,7 +23,7 @@ namespace Anomoly.KitsPlus.Managers
             new Kit()
             {
                 Name ="Survival",
-                XP = null,
+                Balance = null,
                 Vehicle = null,
                 Cooldown = 300,
                 MaxUsage = 0,
@@ -52,7 +56,7 @@ namespace Anomoly.KitsPlus.Managers
         public delegate void KitDeleted(string name);
         public event KitDeleted OnKitDeleted;
 
-        public delegate void KitRedeemed(IRocketPlayer player, Kit redeemedKit);
+        public delegate void KitRedeemed(IRocketPlayer player, Kit redeemedKit, bool wasapaidkit);
         public event KitRedeemed OnKitRedeemed;
 
         public delegate void KitGifted(IRocketPlayer gifter, IRocketPlayer giftee, Kit giftedKit);
@@ -103,8 +107,40 @@ namespace Anomoly.KitsPlus.Managers
 
         public void GiveKit(IRocketPlayer player, Kit kit, IRocketPlayer gifter = null)
         {
+            var uPlayer = (UnturnedPlayer)player;
             var sortedItems = kit.Items;
 
+            if (kit.Balance.HasValue && kit.Balance != 0)
+            {
+                bool wasapaidkit = (kit.Balance > 0);
+                if (!wasapaidkit)
+                {
+                    ContinueGivingKit(player, uPlayer, kit, sortedItems, gifter, wasapaidkit);
+                    return;
+                }
+                ThreadPool.QueueUserWorkItem((_) =>
+                {
+                    bool has = (Uconomy.Instance.Database.GetBalance(player.Id)-kit.Balance) >= 0;
+                    if (has)
+                    {
+                        Uconomy.Instance.Database.IncreaseBalance(player.Id, -Convert.ToDecimal(kit.Balance));
+                        QueueOnMainThread(() => ContinueGivingKit(player, uPlayer, kit, sortedItems, gifter, wasapaidkit));
+                    }
+                    else
+                    {
+                        QueueOnMainThread(() => UnturnedChat.Say(player, KitsPlusPlugin.Instance.Translate("command_kit_not_enough_balance", kit.Name), true));
+                        return;
+                    }
+                });
+            }
+            else
+            {
+                ContinueGivingKit(player, uPlayer, kit, sortedItems, gifter, false);
+                return;
+            }
+        }
+        public void ContinueGivingKit(IRocketPlayer player, UnturnedPlayer uPlayer, Kit kit, List<KitItem> sortedItems, IRocketPlayer gifter, bool wasapaidkit)
+        {
             var itemAssets = sortedItems.OrderByDescending(s =>
             {
                 var itemId = s.Id;
@@ -115,8 +151,6 @@ namespace Anomoly.KitsPlus.Managers
                     return 1;
                 return 0;
             }).ToList();
-
-            var uPlayer = (UnturnedPlayer)player;
 
             foreach (var item in itemAssets)
             {
@@ -134,13 +168,8 @@ namespace Anomoly.KitsPlus.Managers
                 }
             }
 
-            if (kit.XP.HasValue && kit.XP != 0)
-            {
-                uPlayer.Experience += (uint)kit.XP;
-            }
-
             if (gifter == null)
-                OnKitRedeemed?.Invoke(player, kit);
+                OnKitRedeemed?.Invoke(player, kit, wasapaidkit);
             else
                 OnKitGifted?.Invoke(gifter, player, kit);
         }
@@ -154,6 +183,35 @@ namespace Anomoly.KitsPlus.Managers
         {
             _repo.Dispose();
             _repo = null;
+        }
+        public static void RunAsynchronously(System.Action action, string exceptionMessage = null)
+        {
+            ThreadPool.QueueUserWorkItem((_) =>
+            {
+                try
+                {
+                    action.Invoke();
+                }
+                catch (Exception e)
+                {
+                    RunSynchronously(() => Logger.LogException(e, exceptionMessage));
+                }
+            });
+        }
+        public static void RunSynchronously(System.Action action, float delaySeconds = 0)
+        {
+            if (ThreadUtil.IsGameThread(Thread.CurrentThread) && delaySeconds == 0)
+            {
+                action.Invoke();
+            }
+            else
+            {
+                QueueOnMainThread(action, delaySeconds);
+            }
+        }
+        public static void QueueOnMainThread(System.Action action, float delaySeconds = 0)
+        {
+            TaskDispatcher.QueueOnMainThread(action, delaySeconds);
         }
     }
 }
